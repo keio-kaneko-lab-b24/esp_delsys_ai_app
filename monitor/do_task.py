@@ -19,11 +19,10 @@ def instruct(instruction, keep_time):
 
     # monitor読み込み
     # 10ms以下で完了できる
-
     with open(monitor_file, "r") as f:
         for line in f.readlines()[::-1]:
             if "time: " in line:
-                t = int(re.sub("[^0-9]", "", line))
+                t = int(re.match(".*time:\ ?([.0-9]+)", line)[1])
                 break
 
     # 教師として書き込み

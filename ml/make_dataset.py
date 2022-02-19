@@ -91,7 +91,16 @@ def load_emg_sp_data(task_name, task_num):
             times.append(_time)
             extensor_sps.append(_extensor_sp)
             flexor_sps.append(_flexor_sp)
+            _time = False
+            _extensor_sp = False
+            _flexor_sp = False
 
+        # f_spのみ、f_spとe_spのみの場合は途中から記録できた場合なので、棄却する
+        if (_flexor_sp is not False) & (_extensor_sp is False) & (_time is False):
+            _time = False
+            _extensor_sp = False
+            _flexor_sp = False
+        if (_flexor_sp is not False) & (_extensor_sp is not False) & (_time is False):
             _time = False
             _extensor_sp = False
             _flexor_sp = False

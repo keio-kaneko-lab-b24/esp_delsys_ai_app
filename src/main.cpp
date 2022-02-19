@@ -105,7 +105,7 @@ void TaskMaincode(void *pvParameters)
     HandleOutput(motion);
 
     // 推論時間
-    Serial.printf("推論時間 = %ld micro sec", micros() - measured_time);
+    // Serial.printf("推論時間 = %ld micro sec", micros() - measured_time);
   }
 };
 
