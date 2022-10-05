@@ -2,12 +2,17 @@
 
 #include "predictor.h"
 
+// Restスコアに与えるペナルティ値（デフォルト:0.0, 可能範囲:-1.0~1.0）
+// 正であればrestに判定されにくく、負であればrestに判定されやすくなる。
+float rest_penalty = 0.0;
+
 // MLの出力から判定を行う場合
 motion PredictML(
     float rock_score,
     float paper_score,
     float rest_score)
 {
+    rest_score = rest_score - rest_penalty;
     if ((rock_score > paper_score) & (rock_score > rest_score))
     {
         return ROCK;
