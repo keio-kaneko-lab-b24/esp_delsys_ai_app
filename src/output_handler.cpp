@@ -2,10 +2,10 @@
 
 #include "output_handler.h"
 
-#define MD1_OUT1 32 //GPIO #32
-#define MD1_OUT2 33 //GPIO #33
-#define MD2_OUT1 25 //GPIO #25
-#define MD2_OUT2 26 //GPIO #26
+#define MD1_OUT1 32 // GPIO #32
+#define MD1_OUT2 33 // GPIO #33
+#define MD2_OUT1 25 // GPIO #25
+#define MD2_OUT2 26 // GPIO #26
 
 char output_s[100];
 long last_paper_micros = 0;
@@ -25,8 +25,8 @@ void HandleOutput(motion predict_motion)
 {
     if (predict_motion == PAPER)
     {
-        // グー判定されてから1秒間はパー判定しない
-        if ((micros() - last_rock_micros) < 1 * 1000 * 1000)
+        // グー判定されてから0.25秒間はパー判定しない
+        if ((micros() - last_rock_micros) < 1 * 1000 * 250)
         {
             OutputType00();
         }
@@ -38,8 +38,8 @@ void HandleOutput(motion predict_motion)
     }
     else if (predict_motion == ROCK)
     {
-        // パー判定されてから1秒間はグー判定しない
-        if ((micros() - last_paper_micros) < 1 * 1000 * 1000)
+        // パー判定されてから0.25秒間はグー判定しない
+        if ((micros() - last_paper_micros) < 1 * 1000 * 250)
         {
             OutputType00();
         }

@@ -49,6 +49,11 @@
                 "rock_keep_time": 1,
                 "rest_keep_time": 1,
                 "repeat_num":5
+            },
+            "test": {
+                "paper_keep_time": 2,
+                "rock_keep_time": 2,
+                "repeat_num":30
             }
         },
         "view_monitor": {

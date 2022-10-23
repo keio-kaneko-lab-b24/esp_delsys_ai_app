@@ -16,13 +16,13 @@ volatile float s_flexor_values[kModelInputWidth] = {0};
 volatile float buffer_input[kModelInputWidth * kModelInputHeight * kChannleNumber] = {0};
 
 // EMGの値を更新する
-// @value （例）"0.012345, F: 0.056789, E5"
+// @value （例）"E: 0.012345, F: 0.056789, E5"
 void updataRMSFromString(
     std::string value)
 {
     // Indexをずらして格納していく
     begin_index += 1;
-    if (begin_index >= EMG_LENGTH - 1)
+    if (begin_index >= EMG_LENGTH)
     {
         begin_index = 0;
     }
@@ -52,4 +52,21 @@ void updataRMSFromString(
         value.erase(0, pos + delimiter.length());
         break;
     }
+}
+
+// （デバッグ用）EMGの値をSinCos波で更新する
+void updataRMSWithSinCos()
+{
+    // Indexをずらして格納していく
+    begin_index += 1;
+    if (begin_index >= EMG_LENGTH)
+    {
+        begin_index = 0;
+    }
+
+    double rad = begin_index * (360 / EMG_LENGTH) * 3.14 / 180.0;
+    extensor_value = 1.0 + cos(rad);
+    extensor_values[begin_index] = 1.0 + cos(rad);
+    flexor_value = 1.0 + sin(rad);
+    flexor_values[begin_index] = 1.0 + sin(rad);
 }

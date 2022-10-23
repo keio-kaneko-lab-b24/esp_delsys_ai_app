@@ -39,6 +39,14 @@ void TaskIOcode(void *pvParameters)
 
     UpdateBLEConnection();
 
+    // デバッグ用：SinCos波でEMGを作成する。
+    // updataRMSWithSinCos();
+    // unsigned long currentMillis = xTaskGetTickCount();
+    // sprintf(main_s, "time: %lu\ne_sp: %f\nf_sp: %f", currentMillis, extensor_value, flexor_value);
+    // Serial.println(main_s);
+    // sprintf(main_s, "begin_index: %d", begin_index);
+    // Serial.println(main_s);
+
     // ウォッチドッグのために必要
     // https://github.com/espressif/arduino-esp32/issues/3001
     // https://lang-ship.com/blog/work/esp32-freertos-l03-multitask/#toc12
@@ -95,7 +103,7 @@ void TaskMaincode(void *pvParameters)
       input_buffer[i] = buffer_input[i];
     }
     float *result = nn->predict();
-    Serial.printf("%.2f, %.2f, %.2f\n", result[0], result[1], result[2]);
+    Serial.printf("predict: %.2f, %.2f, %.2f\n", result[0], result[1], result[2]);
 
     // 判定
     motion motion = NONE;
@@ -121,9 +129,9 @@ void setup()
   nn = new NeuralNetwork();
 
   xMutex = xSemaphoreCreateMutex();
-  xTaskCreatePinnedToCore(TaskIOcode, "TaskIO", 4096, NULL, 2, &TaskIO, 0); //Task1実行
+  xTaskCreatePinnedToCore(TaskIOcode, "TaskIO", 4096, NULL, 2, &TaskIO, 0); // Task1実行
   delay(500);
-  xTaskCreatePinnedToCore(TaskMaincode, "TaskMain", 4096, NULL, 2, &TaskMain, 1); //Task2実行
+  xTaskCreatePinnedToCore(TaskMaincode, "TaskMain", 4096, NULL, 2, &TaskMain, 1); // Task2実行
   delay(500);
 
   Serial.println("[setup] finished.");

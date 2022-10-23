@@ -1,6 +1,8 @@
 import json
 
 # タスク定義
+
+
 def define_task(task_type):
 
     # パラメータ
@@ -94,6 +96,15 @@ def define_task(task_type):
             ["rest", rest_keep_time],
             ["paper", rock_keep_time],
             ["rest", rest_keep_time]
+        ]*repeat_num
+
+    elif task_type == "test":
+        paper_keep_time = param["monitor"]["do_task"][task_type]["paper_keep_time"]
+        rock_keep_time = param["monitor"]["do_task"][task_type]["rock_keep_time"]
+        repeat_num = param["monitor"]["do_task"][task_type]["repeat_num"]
+        task = [
+            ["rock", paper_keep_time],
+            ["paper", rock_keep_time]
         ]*repeat_num
 
     else:

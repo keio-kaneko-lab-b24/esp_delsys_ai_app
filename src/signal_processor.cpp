@@ -120,7 +120,7 @@ float _Normalize(float value)
     return n_value;
 }
 
-/** 
+/**
  * カテゴライズ
  */
 void Categorize(
@@ -134,7 +134,7 @@ void Categorize(
     // 初期化
     for (size_t i = 0; i < BUFFER_SIZE; i++)
     {
-        buffer_input[0] = 0.0;
+        buffer_input[i] = 0.0;
     }
 
     for (int i = 0; i < input_width; ++i)
@@ -144,14 +144,14 @@ void Categorize(
         int base_index = i * input_height * 2;
         int e_index = base_index + (e_index_ * 2);
         int f_index = base_index + (f_index_ * 2) + 1;
-        // sprintf(signal_process_s, "index-> %d %d", e_index, f_index);
-        // Serial.println(signal_process_s);
+        sprintf(signal_process_s, "index-> %d %d", e_index, f_index);
+        Serial.println(signal_process_s);
         buffer_input[e_index] = 1.0;
         buffer_input[f_index] = 1.0;
     }
 }
 
-/** 
+/**
  * カテゴライズIndexの取得
  */
 int _CategorizeIndex(float value)

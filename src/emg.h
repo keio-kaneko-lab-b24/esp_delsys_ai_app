@@ -30,4 +30,6 @@ extern volatile float buffer_input[BUFFER_SIZE];
 extern void updataRMSFromString(
     std::string value);
 
+extern void updataRMSWithSinCos();
+
 #endif // EMG_H_

@@ -90,42 +90,46 @@ def model_train(model, sp, label_to_int, steps, cnn_height, detail=False):
     if detail:
         sp["task"] = sp["task_name"] + sp["task_num"].apply(str)
         task_to_int = {t: i for i, t in enumerate(sp["task"].unique())}
-        sp["task"] = sp["task"].apply(lambda x: task_to_int[x])
 
-        loo = LeaveOneOut()
-        t = []
-        loss = []
-        acc = []
-        x = []
-        y = []
-        p = []
+        if len(task_to_int) == 1:
+            print("task数が少なすぎて正確な評価ができませんでした。学習は問題なく実行されます。")
+        else:
+            sp["task"] = sp["task"].apply(lambda x: task_to_int[x])
 
-        for train_index, test_index in loo.split(task_to_int):
-            sp_train = sp[sp["task"].apply(lambda x: x in train_index)]
-            sp_test = sp[sp["task"].apply(lambda x: x in test_index)]
-            x_train, y_train, p_train = get_feature_from_sp(
-                sp_train, label_to_int, steps=steps, cnn_height=cnn_height)
-            x_test, y_test, p_test = get_feature_from_sp(
-                sp_test, label_to_int, steps=steps, cnn_height=cnn_height)
+            loo = LeaveOneOut()
+            t = []
+            loss = []
+            acc = []
+            x = []
+            y = []
+            p = []
 
-            early_stopping = tf.keras.callbacks.EarlyStopping(
-                monitor='loss', patience=2)
-            model.fit(x_train, y_train, epochs=500,
-                      callbacks=[early_stopping], verbose=0)
+            for train_index, test_index in loo.split(task_to_int):
+                sp_train = sp[sp["task"].apply(lambda x: x in train_index)]
+                sp_test = sp[sp["task"].apply(lambda x: x in test_index)]
+                x_train, y_train, p_train = get_feature_from_sp(
+                    sp_train, label_to_int, steps=steps, cnn_height=cnn_height)
+                x_test, y_test, p_test = get_feature_from_sp(
+                    sp_test, label_to_int, steps=steps, cnn_height=cnn_height)
 
-            # 分析用にデータ蓄積
-            x.append(x_test)
-            y.append(y_test)
-            p.append(p_test)
+                early_stopping = tf.keras.callbacks.EarlyStopping(
+                    monitor='loss', patience=2)
+                model.fit(x_train, y_train, epochs=500,
+                          callbacks=[early_stopping], verbose=0)
 
-            test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
-            loss.append(test_loss)
-            acc.append(test_acc)
+                # 分析用にデータ蓄積
+                x.append(x_test)
+                y.append(y_test)
+                p.append(p_test)
 
-            t_test = model.predict(x_test)
-            t.append(t_test)
+                test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
+                loss.append(test_loss)
+                acc.append(test_acc)
 
-        result = calc_result(y, t, threshold=0.5)
+                t_test = model.predict(x_test)
+                t.append(t_test)
+
+            result = calc_result(y, t, threshold=0.5)
 
     # 特徴量を抽出する
     x, y, _ = get_feature_from_sp(
@@ -136,7 +140,7 @@ def model_train(model, sp, label_to_int, steps, cnn_height, detail=False):
     return model, x, y, result
 
 
-def convert_to_tflite(model, model_dir, dim, optimize=True):
+def convert_to_tflite(model, model_dir, dim, optimize=False):
 
     run_model = tf.function(lambda x: model(x))
     # 重要。InputShapeを固定する。
