@@ -33,68 +33,14 @@ def define_task(task_type):
             ["rest", rest_keep_time]
         ]*repeat_num
 
-    elif task_type == "grip_stretch":
+    elif task_type == "bbt":
         paper_keep_time = param["monitor"]["do_task"][task_type]["paper_keep_time"]
-        rest_keep_time = param["monitor"]["do_task"][task_type]["rest_keep_time"]
-        repeat_num = param["monitor"]["do_task"][task_type]["repeat_num"]
-        task = [
-            ["paper", paper_keep_time],
-            ["rest", rest_keep_time]
-        ]*repeat_num
-
-    elif task_type == "grip_flexion":
         rock_keep_time = param["monitor"]["do_task"][task_type]["rock_keep_time"]
         rest_keep_time = param["monitor"]["do_task"][task_type]["rest_keep_time"]
         repeat_num = param["monitor"]["do_task"][task_type]["repeat_num"]
         task = [
             ["rock", rock_keep_time],
-            ["rest", rest_keep_time]
-        ]*repeat_num
-
-    elif task_type == "grip_release":
-        paper_keep_time = param["monitor"]["do_task"][task_type]["paper_keep_time"]
-        rest_keep_time = param["monitor"]["do_task"][task_type]["rest_keep_time"]
-        repeat_num = param["monitor"]["do_task"][task_type]["repeat_num"]
-        task = [
             ["paper", paper_keep_time],
-            ["rest", rest_keep_time]
-        ]*repeat_num
-
-    elif task_type == "grip":
-        paper_keep_time = param["monitor"]["do_task"][task_type]["paper_keep_time"]
-        rock_keep_time = param["monitor"]["do_task"][task_type]["rock_keep_time"]
-        rest_keep_time = param["monitor"]["do_task"][task_type]["rest_keep_time"]
-        repeat_num = param["monitor"]["do_task"][task_type]["repeat_num"]
-        task = [
-            ["paper", paper_keep_time],
-            ["rest", rest_keep_time],
-            ["rock", rock_keep_time],
-            ["rest", rest_keep_time],
-            ["paper", paper_keep_time],
-            ["rest", rest_keep_time]
-        ]*repeat_num
-
-    elif task_type == "elbow_stretch_flexion":
-        paper_keep_time = param["monitor"]["do_task"][task_type]["paper_keep_time"]
-        rock_keep_time = param["monitor"]["do_task"][task_type]["rock_keep_time"]
-        rest_keep_time = param["monitor"]["do_task"][task_type]["rest_keep_time"]
-        repeat_num = param["monitor"]["do_task"][task_type]["repeat_num"]
-        task = [
-            ["paper", paper_keep_time],
-            ["rest", rest_keep_time],
-            ["rock", rock_keep_time],
-            ["rest", rest_keep_time]
-        ]*repeat_num
-
-    elif task_type == "elbow_flexion_stretch":
-        paper_keep_time = param["monitor"]["do_task"][task_type]["paper_keep_time"]
-        rock_keep_time = param["monitor"]["do_task"][task_type]["rock_keep_time"]
-        rest_keep_time = param["monitor"]["do_task"][task_type]["rest_keep_time"]
-        repeat_num = param["monitor"]["do_task"][task_type]["repeat_num"]
-        task = [
-            ["rock", paper_keep_time],
-            ["rest", rest_keep_time],
-            ["paper", rock_keep_time],
             ["rest", rest_keep_time]
         ]*repeat_num
 

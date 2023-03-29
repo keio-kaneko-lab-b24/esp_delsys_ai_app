@@ -1,6 +1,6 @@
-#include "NeuralNetwork.h"
+#include "neural_network.h"
 #include "model.h"
-#include "param.h"
+#include "model_param.h"
 #include "tensorflow/lite/micro/all_ops_resolver.h"
 #include "tensorflow/lite/micro/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
@@ -61,9 +61,9 @@ NeuralNetwork::NeuralNetwork()
     // パラメータチェック
     if ((input->dims->size != 4) ||
         (input->dims->data[0] != 1) ||
-        (input->dims->data[1] != kModelInputWidth) ||
-        (input->dims->data[2] != kModelInputHeight) ||
-        (input->dims->data[3] != kChannleNumber) ||
+        (input->dims->data[1] != MODEL_INPUT_WIDTH) ||
+        (input->dims->data[2] != MODEL_INPUT_HEIGHT) ||
+        (input->dims->data[3] != CHANNEL_NUMBER) ||
         (input->type != kTfLiteFloat32))
     {
         TF_LITE_REPORT_ERROR(error_reporter, "model parameter failed");

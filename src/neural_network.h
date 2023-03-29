@@ -1,5 +1,5 @@
-#ifndef __NeuralNetwork__
-#define __NeuralNetwork__
+#ifndef NEURAL_NETWORK_H_
+#define NEURAL_NETWORK_H_
 
 #include <stdint.h>
 
