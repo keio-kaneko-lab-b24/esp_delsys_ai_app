@@ -11,15 +11,7 @@ extern void ArrangeArray(
     volatile int begin_index,
     const int value_length);
 
-extern void Normalize(
-    volatile float ar_extensor_values[],
-    volatile float ar_flexor_values[],
-    volatile float s_extensor_values[],
-    volatile float s_flexor_values[],
-    const int value_length,
-    const int input_width);
-
-extern float _Normalize(float value);
+extern float _NormalizeZeroOne(float value);
 
 extern void Categorize(
     volatile float n_extensor_values[],

@@ -30,9 +30,9 @@
             }
         },
         "view_monitor": {
-            "raw_data_view_yaxis_max": 1,
+            "raw_data_view_yaxis_max": 0.1,
             "raw_data_view_yaxis_min": 0,
-            "sp_data_view_yaxis_max": 1,
+            "sp_data_view_yaxis_max": 0.1,
             "sp_data_view_yaxis_min": 0
         }
     }

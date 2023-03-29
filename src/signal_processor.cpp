@@ -4,7 +4,7 @@
 #include "model_param.h"
 #include "emg.h"
 
-char signal_process_s[100];
+char sp_s[100];
 
 /**
  * 信号処理
@@ -20,19 +20,22 @@ void SignalProcess()
         begin_index,
         EMG_LENGTH);
 
-    // 正規化
-    Normalize(
-        ar_extensor_values,
-        ar_flexor_values,
-        s_extensor_values,
-        s_flexor_values,
-        EMG_LENGTH,
-        MODEL_INPUT_WIDTH);
-
+    // 直近 {MODEL_INPUT_WIDTH}個を推論に使用する
     for (int i = 0; i < MODEL_INPUT_WIDTH; ++i)
     {
-        sprintf(signal_process_s, "%d: %f, %f", i, s_extensor_values[i], s_flexor_values[i]);
-        Serial.println(signal_process_s);
+        s_extensor_values[i] = ar_extensor_values[EMG_LENGTH - MODEL_INPUT_WIDTH + i];
+        s_flexor_values[i] = ar_flexor_values[EMG_LENGTH - MODEL_INPUT_WIDTH + i];
+    }
+
+    unsigned long currentMillis = xTaskGetTickCount();
+    sprintf(sp_s, "time: %lu\ne_sp: %f\nf_sp: %f", currentMillis, s_extensor_values[MODEL_INPUT_WIDTH - 1], s_flexor_values[MODEL_INPUT_WIDTH - 1]);
+    Serial.println(sp_s);
+
+    // 正規化(0-1)
+    for (int i = 0; i < MODEL_INPUT_WIDTH; ++i)
+    {
+        s_extensor_values[i] = _NormalizeZeroOne(s_extensor_values[i]);
+        s_flexor_values[i] = _NormalizeZeroOne(s_flexor_values[i]);
     }
 
     // カテゴリ化
@@ -57,10 +60,10 @@ void ArrangeArray(
 {
     for (int i = 0; i < value_length; ++i)
     {
-        int ring_array_index = begin_index + i - value_length + 1;
-        if (ring_array_index < 0)
+        int ring_array_index = begin_index + i;
+        if (ring_array_index >= value_length)
         {
-            ring_array_index += value_length;
+            ring_array_index -= value_length;
         }
         ar_extensor_values[i] = extensor_values[ring_array_index];
         ar_flexor_values[i] = flexor_values[ring_array_index];
@@ -68,27 +71,9 @@ void ArrangeArray(
 }
 
 /**
- * 正規化（MODEL_INPUT_WIDTH分のみ）
+ * 正規化（0-1）（1つのみ）
  */
-void Normalize(
-    volatile float ar_extensor_values[],
-    volatile float ar_flexor_values[],
-    volatile float s_extensor_values[],
-    volatile float s_flexor_values[],
-    const int value_length,
-    const int input_width)
-{
-    for (int i = 0; i < input_width; ++i)
-    {
-        s_extensor_values[i] = _Normalize(ar_extensor_values[i + (value_length - input_width)]);
-        s_flexor_values[i] = _Normalize(ar_flexor_values[i + (value_length - input_width)]);
-    }
-}
-
-/**
- * 正規化（1つの値のみ）
- */
-float _Normalize(float value)
+float _NormalizeZeroOne(float value)
 {
     float n_value = (value - NORMALIZE_MIN) / (NORMALIZE_MAX - NORMALIZE_MIN);
     if (n_value >= 1)
@@ -126,8 +111,8 @@ void Categorize(
         int base_index = i * input_height * 2;
         int e_index = base_index + (e_index_ * 2);
         int f_index = base_index + (f_index_ * 2) + 1;
-        sprintf(signal_process_s, "index-> %d %d", e_index, f_index);
-        Serial.println(signal_process_s);
+        // sprintf(sp_s, "cnn_index: %f -> %d , %f -> %d", d_extensor_values[i], e_index, d_flexor_values[i], f_index);
+        // Serial.println(sp_s);
         buffer_input[e_index] = 1.0;
         buffer_input[f_index] = 1.0;
     }
