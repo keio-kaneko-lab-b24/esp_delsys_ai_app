@@ -13,7 +13,7 @@ ax = fig.add_subplot(111)
 # アニメーションのフレーム間隔（ms）
 animation_interval = 50
 
-# # 画像ファイル読み込み
+# 画像ファイル読み込み
 paper_img = cv2.resize(cv2.imread('images/paper_real.jpg'), (200, 200))
 paper_img = cv2.cvtColor(paper_img, cv2.COLOR_BGR2RGB)
 
