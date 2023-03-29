@@ -6,11 +6,10 @@
 #include "motion.h"
 #include "predictor.h"
 #include "emg.h"
-#include "param_ml.h"
 #include "signal_processor.h"
 #include "model.h"
-#include "param.h"
-#include "NeuralNetwork.h"
+#include "model_param.h"
+#include "neural_network.h"
 
 NeuralNetwork *nn;
 
@@ -23,15 +22,15 @@ SemaphoreHandle_t xMutex = NULL;
 char main_s[64];
 long last_sample_micros = 0;
 long last_process_micros = 0;
-long measured_time = 0;
+long prediction_micros = 0;
 
 // IOスレッド
 void TaskIOcode(void *pvParameters)
 {
   for (;;)
   {
-    // 1000Hz
-    if ((micros() - last_sample_micros) < 1 * 1000)
+    // 毎秒 {BLE_HZ} 回実行される
+    if ((micros() - last_sample_micros) < (1000 * 1000 / BLE_HZ))
     {
       continue;
     }
@@ -65,8 +64,8 @@ void TaskMaincode(void *pvParameters)
 {
   for (;;)
   {
-    // 10Hz
-    if ((micros() - last_process_micros) < 100 * 1000)
+    // 毎秒 {PREDICT_HZ} 回実行される
+    if ((micros() - last_process_micros) < (1000 * 1000 / PREDICT_HZ))
     {
       continue;
     }
@@ -78,7 +77,7 @@ void TaskMaincode(void *pvParameters)
     vTaskDelay(1);
 
     // スレッドセーフな処理
-    measured_time = micros();
+    prediction_micros = micros();
     if (xSemaphoreTake(xMutex, (portTickType)100) == pdTRUE)
     {
       SignalProcess();
@@ -87,8 +86,8 @@ void TaskMaincode(void *pvParameters)
     }
 
     // 直近のRMSが0の場合は、Restに判定
-    float last_extensor = s_extensor_values[kModelInputWidth - 1];
-    float last_flexor = s_flexor_values[kModelInputWidth - 1];
+    float last_extensor = s_extensor_values[MODEL_INPUT_WIDTH - 1];
+    float last_flexor = s_flexor_values[MODEL_INPUT_WIDTH - 1];
     if ((last_extensor == 0) & (last_flexor == 0))
     {
       motion motion = NONE;
@@ -103,7 +102,7 @@ void TaskMaincode(void *pvParameters)
       input_buffer[i] = buffer_input[i];
     }
     float *result = nn->predict();
-    Serial.printf("predict: %.2f, %.2f, %.2f\n", result[0], result[1], result[2]);
+    Serial.printf("prediction: %.2f, %.2f, %.2f\n", result[0], result[1], result[2]);
 
     // 判定
     motion motion = NONE;
@@ -113,7 +112,7 @@ void TaskMaincode(void *pvParameters)
     HandleOutput(motion);
 
     // 推論時間
-    // Serial.printf("推論時間 = %ld micro sec\n", micros() - measured_time);
+    Serial.printf("推論時間 = %ld micros\n", micros() - prediction_micros);
   }
 };
 

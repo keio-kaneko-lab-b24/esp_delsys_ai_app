@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "signal_processor.h"
-#include "param.h"
+#include "model_param.h"
 #include "emg.h"
 
 char signal_process_s[100];
@@ -11,16 +11,6 @@ char signal_process_s[100];
  */
 void SignalProcess()
 {
-    // sprintf(signal_process_s, "normalize_max: %f, normalize_min: %f", kNormalizeMax, kNormalizeMin);
-    // Serial.println(signal_process_s);
-
-    // Serial.println("before normalize");
-    // for (int i = 0; i < EMG_LENGTH; ++i)
-    // {
-    //     sprintf(signal_process_s, "%d: %f, %f", i, extensor_values[i], flexor_values[i]);
-    //     Serial.println(signal_process_s);
-    // }
-
     // 整列
     ArrangeArray(
         extensor_values,
@@ -37,17 +27,9 @@ void SignalProcess()
         s_extensor_values,
         s_flexor_values,
         EMG_LENGTH,
-        kModelInputWidth);
+        MODEL_INPUT_WIDTH);
 
-    // テスト
-    // s_extensor_values[0] = 0.0;
-    // s_extensor_values[1] = 0.0;
-    // s_extensor_values[2] = 0.0;
-    // s_flexor_values[0] = 0.04;
-    // s_flexor_values[1] = 0.1;
-    // s_flexor_values[2] = 0.1;
-
-    for (int i = 0; i < kModelInputWidth; ++i)
+    for (int i = 0; i < MODEL_INPUT_WIDTH; ++i)
     {
         sprintf(signal_process_s, "%d: %f, %f", i, s_extensor_values[i], s_flexor_values[i]);
         Serial.println(signal_process_s);
@@ -58,8 +40,8 @@ void SignalProcess()
         s_extensor_values,
         s_flexor_values,
         buffer_input,
-        kModelInputWidth,
-        kModelInputHeight);
+        MODEL_INPUT_WIDTH,
+        MODEL_INPUT_HEIGHT);
 }
 
 /**
@@ -86,7 +68,7 @@ void ArrangeArray(
 }
 
 /**
- * 正規化（kModelInputWidth分のみ）
+ * 正規化（MODEL_INPUT_WIDTH分のみ）
  */
 void Normalize(
     volatile float ar_extensor_values[],
@@ -108,7 +90,7 @@ void Normalize(
  */
 float _Normalize(float value)
 {
-    float n_value = (value - kNormalizeMin) / (kNormalizeMax - kNormalizeMin);
+    float n_value = (value - NORMALIZE_MIN) / (NORMALIZE_MAX - NORMALIZE_MIN);
     if (n_value >= 1)
     {
         return 1;
@@ -156,10 +138,10 @@ void Categorize(
  */
 int _CategorizeIndex(float value)
 {
-    int index = floor(value * kModelInputHeight);
-    if (index >= kModelInputHeight)
+    int index = floor(value * MODEL_INPUT_HEIGHT);
+    if (index >= MODEL_INPUT_HEIGHT)
     {
-        index = kModelInputHeight - 1;
+        index = MODEL_INPUT_HEIGHT - 1;
     }
     return index;
 }

@@ -26,7 +26,7 @@ tf.random.set_seed(1234)
 # ===============
 LABEL_TO_INT = {"rock": 0, "paper": 1, "rest": 2}  # 各ラベルに対する出力ノード
 INPUT_SIZE = 2  # 筋電の数。デフォルト：2 （EDC, FDP）
-PARAM_PATH = "./src/param.h"  # パラメータを保存するパス
+PARAM_PATH = "./src/model_param.h"  # パラメータを保存するパス
 MODEL_DIR = "./ml/dataset/model"  # Kerasモデルのパス
 TFLITE_MODEL_PATH = "./ml/dataset/model.tflite"  # TFLiteモデルのパス
 C_MODEL_PATH = "./src/model.cpp"  # Cモデルのパス
@@ -126,12 +126,12 @@ def main(sp):
 
     # パラメータ保存
     param = {}
-    param["kNormalizeMax"] = normalize_stats.normalize_max
-    param["kNormalizeMin"] = normalize_stats.normalize_min
+    param["NORMALIZE_MAX"] = normalize_stats.normalize_max
+    param["NORMALIZE_MIN"] = normalize_stats.normalize_min
     param_int = {}
-    param_int["kModelInputWidth"] = STEPS
-    param_int["kModelInputHeight"] = CNN_HEIGHT
-    param_int["kChannleNumber"] = INPUT_SIZE
+    param_int["MODEL_INPUT_WIDTH"] = STEPS
+    param_int["MODEL_INPUT_HEIGHT"] = CNN_HEIGHT
+    param_int["CHANNEL_NUMBER"] = INPUT_SIZE
     dict_to_cfile(param, param_int, PARAM_PATH, defname="PARAM", _round=6)
 
     return result

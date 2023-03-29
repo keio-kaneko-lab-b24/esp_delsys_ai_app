@@ -1,19 +1,17 @@
 #include <Arduino.h>
 
 #include "emg.h"
-#include "param_ml.h"
-
-volatile float extensor_value = 0;
-volatile float flexor_value = 0;
 
 volatile int begin_index = 0;
+volatile float extensor_value = 0;
+volatile float flexor_value = 0;
 volatile float extensor_values[EMG_LENGTH] = {0};
 volatile float flexor_values[EMG_LENGTH] = {0};
 volatile float ar_extensor_values[EMG_LENGTH] = {0};
 volatile float ar_flexor_values[EMG_LENGTH] = {0};
-volatile float s_extensor_values[kModelInputWidth] = {0};
-volatile float s_flexor_values[kModelInputWidth] = {0};
-volatile float buffer_input[kModelInputWidth * kModelInputHeight * kChannleNumber] = {0};
+volatile float s_extensor_values[MODEL_INPUT_WIDTH] = {0};
+volatile float s_flexor_values[MODEL_INPUT_WIDTH] = {0};
+volatile float buffer_input[MODEL_INPUT_WIDTH * MODEL_INPUT_HEIGHT * CHANNEL_NUMBER] = {0};
 
 // EMGの値を更新する
 // @value （例）"E: 0.012345, F: 0.056789, E5"
